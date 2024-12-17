@@ -40,26 +40,30 @@
             const email = document.getElementById('email').value;
             const application = document.getElementById('application').value;
 
+            const webhookURL = 'https://discord.com/api/webhooks/1318421851281821746/wQ6vRwLVRAmYybR4c6RLGEixdLEiHwVmEftkqw7v0Px3XT_e1kyIUY8GX5RFkeLXdlBR'; // Replace this with your webhook URL
+
+            const payload = {
+                content: `**New Application Submission**\n**Name:** ${name}\n**Email:** ${email}\n**Application:**\n${application}`
+            };
+
             const messageBox = document.getElementById('message');
 
             try {
-                const response = await fetch('https://YOUR_NODE_SERVER_URL/submit', { // Replace with your Node server URL
+                const response = await fetch(webhookURL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, application })
+                    body: JSON.stringify(payload)
                 });
 
-                const result = await response.json();
-
-                if (result.success) {
+                if (response.ok) {
                     messageBox.textContent = "Application sent successfully!";
                     messageBox.style.color = "green";
                     document.getElementById('application-form').reset();
                 } else {
-                    throw new Error(result.message);
+                    throw new Error("Failed to send application.");
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Error:", error);
                 messageBox.textContent = "Error: Could not send the application.";
                 messageBox.style.color = "red";
             }
